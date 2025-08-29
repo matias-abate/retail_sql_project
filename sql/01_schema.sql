@@ -1,0 +1,36 @@
+CREATE TABLE IF NOT EXISTS DimTime (
+  TimeKey DATE PRIMARY KEY,
+  Year INT,
+  Month INT,
+  Day INT,
+  MonthName VARCHAR(12)
+);
+
+CREATE TABLE IF NOT EXISTS DimCustomers (
+  CustomerID INT PRIMARY KEY,
+  FullName VARCHAR(120) NOT NULL,
+  Email VARCHAR(180) UNIQUE,
+  Region VARCHAR(60),
+  CreatedAt DATE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS DimProducts (
+  ProductID INT PRIMARY KEY,
+  SKU VARCHAR(64) UNIQUE,
+  ProductName VARCHAR(160) NOT NULL,
+  Category VARCHAR(80),
+  UnitPrice DECIMAL(12,2) NOT NULL CHECK (UnitPrice >= 0)
+);
+
+CREATE TABLE IF NOT EXISTS FactSales (
+  SaleID BIGINT PRIMARY KEY AUTO_INCREMENT,
+  TimeKey DATE NOT NULL,
+  CustomerID INT NOT NULL,
+  ProductID INT NOT NULL,
+  Quantity INT NOT NULL CHECK (Quantity > 0),
+  UnitPrice DECIMAL(12,2) NOT NULL CHECK (UnitPrice >= 0),
+  DiscountPct DECIMAL(5,2) NOT NULL DEFAULT 0 CHECK (DiscountPct BETWEEN 0 AND 100),
+  CONSTRAINT fk_time FOREIGN KEY (TimeKey) REFERENCES DimTime(TimeKey),
+  CONSTRAINT fk_cust FOREIGN KEY (CustomerID) REFERENCES DimCustomers(CustomerID),
+  CONSTRAINT fk_prod FOREIGN KEY (ProductID) REFERENCES DimProducts(ProductID)
+);

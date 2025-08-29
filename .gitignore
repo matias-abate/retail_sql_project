@@ -1,0 +1,5 @@
+metabase-data/
+mysql-data/
+*.log
+*.csv
+*.zip
